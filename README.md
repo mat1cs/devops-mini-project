@@ -1,26 +1,58 @@
-# DevOps Mini Project
+# Flask + PostgreSQL Dockerized Application
 
-## Description
+## Огляд
 
-This project is a simple Flask web application running inside a Docker container.
+Цей проект є контейнеризованою програмою Flask, підключеною до PostgreSQL за допомогою Docker Compose.
 
-It demonstrates:
+Метою цього проекту було продемонструвати:
 
-- Containerized Python application
-- Dockerfile build process
-- Docker Compose orchestration
-- Environment variables usage
-- Non-root container execution
+- Структуру програми на основі ООП
+- Безпечну взаємодію з базою даних (параметризовані запити)
+- Ізоляцію служб за допомогою мережі Docker
+- Постійне зберігання за допомогою томів
+- Логіку повторних спроб для умов гонки запуску бази даних
 
 ---
 
-## How to Run
+## Архітектура
 
-### 1. Build and start the container
+Клієнт → Flask (веб) → PostgreSQL (база даних)
 
-```bash
-docker-compose up --build
-```
-### 2. Open in browser
+- Flask працює в окремому контейнері
+- PostgreSQL працює в ізольованому контейнері
+- Сервіси спілкуються через внутрішню мережу Docker
+- Порт бази даних не відкритий зовні
+- Для зберігання бази даних використовується постійний том
 
-http://localhost:8000
+---
+
+## Структура проекту
+
+app/
+- app.py
+- config.py
+- database.py
+- requirements.txt
+
+docker-compose.yml
+Dockerfile
+README.md
+
+---
+
+## Ключові технічні рішення
+
+### 1. Розділення функцій
+
+- Клас `Config` обробляє змінні середовища
+- `DatabaseService` інкапсулює логіку бази даних
+- `app.py` ініціалізує та з'єднує компоненти
+
+### 2. Введення залежностей
+
+DatabaseService отримує екземпляр Config замість того, щоб створювати його внутрішньо.
+Це зменшує зв'язок і покращує гнучкість.
+
+### 3. Безпечні SQL-запити
+
+Усі запити використовують параметризоване виконання, щоб запобігти SQL-ін'єкції.
